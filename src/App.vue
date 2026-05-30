@@ -144,12 +144,40 @@ export default {
         this.run = await response.json();
         this.status = 'evidence ready';
       } catch (error) {
-        this.status = 'backend unavailable';
-        this.run = { error: String(error), hint: `Start the V backend at ${apiBase}` };
+        this.status = 'demo fallback';
+        this.run = demoRun(String(error));
       } finally {
         this.busy = false;
       }
     }
   }
 };
+
+function demoRun(error) {
+  return {
+    run_id: 'demo-web-fallback',
+    summary: 'SEV-2 on checkout-api: New canary revision correlates with latency and payment failures.',
+    google_integration: {
+      cloud_runtime: 'Cloud Run compatible V backend',
+      model: 'gemini-2.5-flash',
+      mode: 'demo'
+    },
+    mcp_integration: {
+      mode: 'demo',
+      selected: 'dynatrace.problems.investigate',
+      tools: ['dynatrace.problems.investigate', 'dynatrace.dql.query']
+    },
+    plan: [
+      { name: 'Stabilize intake', intent: 'Classify severity, impact and constraints.', tool: 'agent.policy' },
+      { name: 'Observe production context', intent: 'Use Dynatrace MCP tools for problem context.', tool: 'Dynatrace MCP' },
+      { name: 'Correlate release change', intent: 'Compare Cloud Run revision timing with symptoms.', tool: 'Cloud Run metrics' },
+      { name: 'Plan guarded remediation', intent: 'Prepare reversible traffic shift with approval.', tool: 'Gemini planner' },
+      { name: 'Package evidence', intent: 'Generate digest and audit trail.', tool: 'agent.evidence_pack' }
+    ],
+    evidence: {
+      digest_sha256: '2fd7f5221f9115819f3865931ff2c9002289dbdcc2907fc468da3b5d213d013d'
+    },
+    backend_error: error
+  };
+}
 </script>

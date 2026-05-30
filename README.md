@@ -20,3 +20,6 @@ by default. Override with:
 ```js
 localStorage.setItem('aegisops_api', 'https://YOUR-CLOUD-RUN-URL')
 ```
+
+If the backend is unavailable, the dashboard switches to a deterministic demo
+run so a public GitHub Pages URL remains judgeable.
